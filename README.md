@@ -11,6 +11,23 @@ logout с отзывом сессии и управление доступом �
 - bcrypt для хранения hash паролей.
 - PyJWT для access-токенов.
 
+## Структура проекта
+
+| Путь | Назначение |
+| --- | --- |
+| `main.py` | Точка запуска приложения |
+| `app/application.py` | Сборка FastAPI и подключение роутеров |
+| `app/config.py` | Переменные окружения и настройки |
+| `app/database.py` | Engine и SQLAlchemy-сессии |
+| `app/models.py` | Таблицы базы данных и перечисления |
+| `app/schemas.py` | Входные и выходные модели API |
+| `app/validators.py` | Проверки пользовательских значений |
+| `app/security.py` | Hash паролей и JWT |
+| `app/dependencies.py` | Авторизация текущего пользователя |
+| `app/services.py` | Seed-данные, правила доступа и mock-данные |
+| `app/routers/` | Endpoints по разделам приложения |
+| `static/` | Обычный веб-интерфейс |
+
 ## Настройка PostgreSQL
 
 Создайте базу и отдельного пользователя PostgreSQL:

@@ -20,7 +20,9 @@ def load_app(tmp_path, monkeypatch):
     }
     for key, value in values.items():
         monkeypatch.setenv(key, value)
-    sys.modules.pop("main", None)
+    for name in tuple(sys.modules):
+        if name == "main" or name == "app" or name.startswith("app."):
+            sys.modules.pop(name, None)
     return importlib.import_module("main")
 
 
