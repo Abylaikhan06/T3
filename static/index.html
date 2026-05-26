@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AccessHub | Система доступа</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header class="header">
+      <a class="brand" href="/">
+        <span class="brand-mark">A</span>
+        <span>AccessHub</span>
+      </a>
+      <nav class="nav">
+        <button type="button" class="nav-link active" data-view="dashboard">Главная</button>
+        <button type="button" class="nav-link auth-only" data-view="orders">Заказы</button>
+        <button type="button" class="nav-link admin-only" data-view="admin">Управление доступом</button>
+      </nav>
+      <div class="header-actions">
+        <span id="identity" class="identity"></span>
+        <button id="open-auth" class="button secondary">Войти</button>
+        <button id="logout" class="button secondary hidden">Выйти</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section id="guest-view" class="hero">
+        <div class="hero-content">
+          <p class="eyebrow">Безопасное бизнес-приложение</p>
+          <h1>Управляйте заказами<br>с контролем доступа</h1>
+          <p class="lead">Регистрация пользователей, защищённые сессии и гибкие права ролей в одном приложении.</p>
+          <div class="hero-actions">
+            <button id="start-login" class="button primary">Войти в систему</button>
+            <button id="start-register" class="button outline">Создать аккаунт</button>
+          </div>
+        </div>
+        <div class="security-card">
+          <div class="shield">✓</div>
+          <h2>Доступ защищён</h2>
+          <p>JWT-токены, bcrypt-пароли и управление правами по ролям.</p>
+          <div class="metric-grid">
+            <div><strong>3</strong><span>Роли</span></div>
+            <div><strong>7</strong><span>Прав</span></div>
+            <div><strong>401/403</strong><span>Защита</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard-view" class="hidden">
+        <div class="page-title">
+          <div>
+            <p class="eyebrow">Личный кабинет</p>
+            <h1>Здравствуйте, <span id="welcome-name"></span></h1>
+          </div>
+          <span id="role-badge" class="badge"></span>
+        </div>
+        <div class="cards">
+          <article class="card profile-card">
+            <div class="card-head">
+              <h2>Профиль</h2>
+              <button id="edit-profile" class="text-button">Редактировать</button>
+            </div>
+            <p class="label">ФИО</p>
+            <p id="profile-name" class="value"></p>
+            <p class="label">Email</p>
+            <p id="profile-email" class="value"></p>
+            <button id="delete-account" class="text-button danger">Удалить аккаунт</button>
+          </article>
+          <article class="card">
+            <div class="card-head">
+              <h2>Доступные заказы</h2>
+              <button class="text-button" data-view="orders">Все заказы</button>
+            </div>
+            <div id="orders-preview" class="order-list"></div>
+          </article>
+          <article id="admin-summary" class="card admin-only">
+            <h2>Администрирование</h2>
+            <p>Настройка правил доступа для ролей и ресурсов приложения.</p>
+            <button class="button primary small" data-view="admin">Открыть панель</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="orders-view" class="hidden">
+        <div class="page-title">
+          <div>
+            <p class="eyebrow">Бизнес-объекты</p>
+            <h1>Заказы</h1>
+          </div>
+          <button id="new-order" class="button primary">Новый заказ</button>
+        </div>
+        <div id="orders-grid" class="orders-grid"></div>
+      </section>
+
+      <section id="admin-view" class="hidden">
+        <div class="page-title">
+          <div>
+            <p class="eyebrow">Администратор</p>
+            <h1>Правила доступа</h1>
+            <p class="muted">Настройте разрешения ролей для ресурсов системы.</p>
+          </div>
+        </div>
+        <div class="card table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Роль / ресурс</th>
+                <th>Читать свои</th>
+                <th>Читать все</th>
+                <th>Создать</th>
+                <th>Изменить свои</th>
+                <th>Изменить все</th>
+                <th>Удалить свои</th>
+                <th>Удалить все</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rules-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="auth-modal" class="modal hidden">
+      <div class="modal-card auth-card">
+        <button type="button" class="modal-close" data-close="auth-modal">×</button>
+        <div class="tabs">
+          <button id="login-tab" class="tab active">Вход</button>
+          <button id="register-tab" class="tab">Регистрация</button>
+        </div>
+        <form id="login-form" class="form">
+          <h2>Добро пожаловать</h2>
+          <label>Email<input type="email" name="email" required autocomplete="email"></label>
+          <label>Пароль<input type="password" name="password" required autocomplete="current-password"></label>
+          <button class="button primary full" type="submit">Войти</button>
+          <p class="demo">Администратор: admin@example.com / Admin123!</p>
+        </form>
+        <form id="register-form" class="form hidden">
+          <h2>Создать аккаунт</h2>
+          <label>ФИО<input type="text" name="full_name" required minlength="2"></label>
+          <label>Email<input type="email" name="email" required></label>
+          <label>Пароль<input type="password" name="password" required minlength="8"></label>
+          <label>Повторите пароль<input type="password" name="password_repeat" required minlength="8"></label>
+          <button class="button primary full" type="submit">Зарегистрироваться</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="profile-modal" class="modal hidden">
+      <form id="profile-form" class="modal-card form compact">
+        <button type="button" class="modal-close" data-close="profile-modal">×</button>
+        <h2>Изменить профиль</h2>
+        <label>ФИО<input type="text" name="full_name" required></label>
+        <label>Email<input type="email" name="email" required></label>
+        <button class="button primary full" type="submit">Сохранить</button>
+      </form>
+    </div>
+
+    <div id="order-modal" class="modal hidden">
+      <form id="order-form" class="modal-card form compact">
+        <button type="button" class="modal-close" data-close="order-modal">×</button>
+        <h2 id="order-form-title">Новый заказ</h2>
+        <input type="hidden" name="id">
+        <label>Название<input type="text" name="title" required minlength="2"></label>
+        <label>Сумма<input type="number" name="amount" required min="0.01" step="0.01"></label>
+        <button class="button primary full" type="submit">Сохранить</button>
+      </form>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
